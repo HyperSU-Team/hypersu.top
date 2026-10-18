@@ -318,6 +318,7 @@
 .VPNavBar {
   backdrop-filter: blur(16px) saturate(180%) !important;
   background: color-mix(in srgb, var(--vp-c-bg) 80%, transparent) !important;
+  z-index: var(--vp-z-index-nav);
 }
 
 .VPNavBarTitle .title {
@@ -327,6 +328,16 @@
 
 .VPNav {
   border-bottom: 1px solid var(--vp-c-divider);
+  /*
+   * Pin the bar above the page content.
+   *
+   * The nav is a normal positioned element and the content follows it in document order, so
+   * whenever the content establishes a stacking context of its own - a `transform` or a
+   * `filter`, both of which an entry animation can introduce - the content paints over the bar
+   * and the logo and site title are clipped. An explicit z-index keeps the bar on top whatever
+   * the page below it does.
+   */
+  z-index: var(--vp-z-index-nav);
 }
 
 .VPNavBarMenuLink {
@@ -552,13 +563,24 @@
   }
 }
 
+/**
+ * Page fade-in
+ *
+ * Opacity only. The previous version also animated `transform: translateY(8px)`, and a
+ * `transform` - even one that ends at 0 - makes the element a stacking context for the whole
+ * duration. That took `.VPContent` out of the same stacking order as `.VPNav`, which sits above
+ * it with `z-index: var(--vp-z-index-nav)`, and the nav bar ended up behind the hero: the logo
+ * and the "HyperSU" title were clipped by the content area sliding over them.
+ *
+ * A plain opacity fade has no such side effect and looks the same at this duration.
+ */
 .VPContent {
   animation: fadeIn 0.4s var(--ease-out);
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes float {
