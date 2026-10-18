@@ -9,9 +9,9 @@ We assume you already have basic firmware flashing skills and bricking recovery 
 ::: tip Download
 Get the latest manager from [GitHub Releases](https://github.com/HyperSU-Team/HyperSU/releases/latest).
 
-If you want to try an unreleased development build, you can also grab the newest build of the _main_ branch via [`nightly.link`](https://nightly.link/HyperSU-Team/HyperSU/workflows/build-manager/main/Manager-release.zip) or [`GitHub Actions`](https://github.com/HyperSU-Team/HyperSU/actions/workflows/build-manager.yml?query=branch:main).
-
-(Nightly.link allows downloading files without logging into a GitHub account.)
+If you want to try an unreleased development build, you can download the artifacts of the newest
+_main_ branch build from [GitHub Actions](https://github.com/HyperSU-Team/HyperSU/actions/workflows/build-manager.yml?query=branch:main)
+(a GitHub account is required).
 :::
 
 ::: warning

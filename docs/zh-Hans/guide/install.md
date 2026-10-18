@@ -9,9 +9,7 @@
 ::: tip 下载
 请前往 [GitHub Releases](https://github.com/HyperSU-Team/HyperSU/releases/latest) 下载最新版本的管理器。
 
-如果你想体验尚未发布的开发版本，也可以通过 [`nightly.link`](https://nightly.link/HyperSU-Team/HyperSU/workflows/build-manager/main/Manager-release.zip) 或 [`GitHub Actions`](https://github.com/HyperSU-Team/HyperSU/actions/workflows/build-manager.yml?query=branch:main) 获取 main 分支的最新构建。
-
-(Nightly.link 无需登录 GitHub 账号即可下载文件)
+如果你想体验尚未发布的开发版本，可以在 [GitHub Actions](https://github.com/HyperSU-Team/HyperSU/actions/workflows/build-manager.yml?query=branch:main) 中下载 main 分支最新构建的产物（需要登录 GitHub 账号）。
 :::
 
 ::: warning
