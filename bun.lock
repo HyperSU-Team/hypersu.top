@@ -7,7 +7,7 @@
       "dependencies": {
         "@nolebase/markdown-it-bi-directional-links": "^2.18.2",
         "@nolebase/vitepress-plugin-enhanced-mark": "^2.18.2",
-        "@nolebase/vitepress-plugin-enhanced-readabilities": "^2.18.2",
+        "@nolebase/vitepress-plugin-enhanced-readabilities": "^2.21.1",
         "@nolebase/vitepress-plugin-git-changelog": "^2.18.2",
         "@nolebase/vitepress-plugin-highlight-targeted-heading": "^2.18.2",
         "@nolebase/vitepress-plugin-inline-link-preview": "^2.18.2",
@@ -65,11 +65,11 @@
 
     "@nolebase/markdown-it-element-transform": ["@nolebase/markdown-it-element-transform@2.18.2", "", { "peerDependencies": { "markdown-it": ">=14.1.0" } }, "sha512-uA0QR2BC4qN2fT/MODFghCO4v7Y1dEZD7lMgz17Ma2El+74KSVLaDxQtIMkA0Vs67QmjLKK99wo/LOVdPsPNMg=="],
 
-    "@nolebase/ui": ["@nolebase/ui@2.18.2", "", { "dependencies": { "@iconify-json/octicon": "^1.2.10", "less": "^4.4.0" }, "peerDependencies": { "vitepress": "^1.5.0 || ^2.0.0-alpha.1", "vue": ">= 3.5.18" } }, "sha512-xxfRacF9cqQ5/umMhvhr0y2W4SkhzTmrrAHJ0UAAu/pIWfV/JPE9Hj0buH06bK7ZEUur+036gxkKlStI6UtDBw=="],
+    "@nolebase/ui": ["@nolebase/ui@2.21.1", "", { "dependencies": { "@iconify-json/octicon": "^1.2.38", "less": "^4.9.1" }, "peerDependencies": { "vitepress": "^2.0.0-alpha.20", "vue": ">=3.5.43" } }, "sha512-xoxfiriUU+wA8e+a/MWiozX761JrHLBcnFMOuIPNI25qOoWBc0OLGNErA3L6AcquIExHT5BoVAMEw1sbEsdgQQ=="],
 
     "@nolebase/vitepress-plugin-enhanced-mark": ["@nolebase/vitepress-plugin-enhanced-mark@2.18.2", "", { "dependencies": { "less": "^4.4.0" }, "peerDependencies": { "vitepress": "^1.5.0 || ^2.0.0-alpha.1" } }, "sha512-MwdzJuUoGBZLuhKttXs5UX7APqYU37mBywle3hRAlythXIOrnCT1fQyU6zQ8SJCXkojuCUS3N3whQTA2Cmf16Q=="],
 
-    "@nolebase/vitepress-plugin-enhanced-readabilities": ["@nolebase/vitepress-plugin-enhanced-readabilities@2.18.2", "", { "dependencies": { "@iconify-json/carbon": "^1.2.11", "@iconify-json/icon-park-outline": "^1.2.2", "@nolebase/ui": "^2.18.2", "less": "^4.4.0" }, "peerDependencies": { "vitepress": "^1.5.0 || ^2.0.0-alpha.1" } }, "sha512-fDhdZBSJL2qs/1xac0PtJfU5UI7b36ffVPYgzM8Ig2NjqMJ7cBvrTTPGq03lUeMjK7GD7fItAKudaP+ZrtMg8w=="],
+    "@nolebase/vitepress-plugin-enhanced-readabilities": ["@nolebase/vitepress-plugin-enhanced-readabilities@2.21.1", "", { "dependencies": { "@iconify-json/carbon": "^1.2.28", "@iconify-json/icon-park-outline": "^1.2.4", "@nolebase/ui": "^2.21.1", "less": "^4.9.1" }, "peerDependencies": { "vitepress": "^2.0.0-alpha.20" } }, "sha512-TDui/O2WXGk/VWdeF8jMNi9PqIaigl6vhAvMCDBky1T4BujRcqpdMNf3CAyeWJQzMZhEp5qyIwmDVP7gbYH/qQ=="],
 
     "@nolebase/vitepress-plugin-git-changelog": ["@nolebase/vitepress-plugin-git-changelog@2.18.2", "", { "dependencies": { "@iconify-json/octicon": "^1.2.10", "@nolebase/ui": "^2.18.2", "colorette": "^2.0.20", "date-fns": "^4.1.0", "defu": "^6.1.4", "es-toolkit": "^1.39.9", "execa": "^9.6.0", "globby": "^14.1.0", "gray-matter": "^4.0.3", "less": "^4.4.0", "uncrypto": "^0.1.3" }, "peerDependencies": { "vitepress": "^1.5.0 || ^2.0.0-alpha.1" } }, "sha512-TT1nxP+iS+5K8OLtkEr1EZ4bhCa4iqggly0JTD7TsO01hcwzMovr0lRaxPTo/4i/0bwMiPcaKxpKJ2zJIiu4Kw=="],
 
@@ -628,6 +628,12 @@
     "yoctocolors": ["yoctocolors@2.2.0", "", {}, "sha512-xYqdZFUK/VYazNl/oCDYN+3WloWQwMfZxBoiNt6qNyk+xfOdi598muWE42rNZFp1kNOiqW936q5RhUdnpqElSg=="],
 
     "zwitch": ["zwitch@2.0.4", "", {}, "sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A=="],
+
+    "@nolebase/ui/@iconify-json/octicon": ["@iconify-json/octicon@1.2.39", "", { "dependencies": { "@iconify/types": "*" } }, "sha512-pdl21yK10sNHQdIbGM+4Or7PJbAW5L7kfHkkwb58Gt2OOzrV0WZUMdFdmv6yNtnxDzpdfkCPRTSHDBD1GI8zmw=="],
+
+    "@nolebase/vitepress-plugin-git-changelog/@nolebase/ui": ["@nolebase/ui@2.18.2", "", { "dependencies": { "@iconify-json/octicon": "^1.2.10", "less": "^4.4.0" }, "peerDependencies": { "vitepress": "^1.5.0 || ^2.0.0-alpha.1", "vue": ">= 3.5.18" } }, "sha512-xxfRacF9cqQ5/umMhvhr0y2W4SkhzTmrrAHJ0UAAu/pIWfV/JPE9Hj0buH06bK7ZEUur+036gxkKlStI6UtDBw=="],
+
+    "@nolebase/vitepress-plugin-inline-link-preview/@nolebase/ui": ["@nolebase/ui@2.18.2", "", { "dependencies": { "@iconify-json/octicon": "^1.2.10", "less": "^4.4.0" }, "peerDependencies": { "vitepress": "^1.5.0 || ^2.0.0-alpha.1", "vue": ">= 3.5.18" } }, "sha512-xxfRacF9cqQ5/umMhvhr0y2W4SkhzTmrrAHJ0UAAu/pIWfV/JPE9Hj0buH06bK7ZEUur+036gxkKlStI6UtDBw=="],
 
     "@vue/compiler-core/entities": ["entities@7.0.1", "", {}, "sha512-TWrgLOFUQTH994YUyl1yT4uyavY5nNB5muff+RtWaqNVCAK408b5ZnnbNAUEWLTCpum9w6arT70i1XdQ4UeOPA=="],
 
