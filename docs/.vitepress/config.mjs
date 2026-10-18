@@ -17,17 +17,17 @@ export default defineConfig({
   description: "A kernel-level ROOT solution for Android built on KernelSU, focused on stability and Non-GKI compatibility.",
 
   sitemap: {
-    hostname: "https://HyperSU.org",
+    hostname: "https://hypersu.top",
   },
 
   locales: locale.locales,
 
   head: [
     ["link", { rel: "icon", href: "/favicon.svg" }],
-    ["link", { rel: "canonical", href: "https://HyperSU.org/" }],
-    ["link", { rel: "alternate", hreflang: "en", href: "https://HyperSU.org/" }],
-    ["link", { rel: "alternate", hreflang: "zh-CN", href: "https://HyperSU.org/zh-Hans/" }],
-    ["link", { rel: "alternate", hreflang: "x-default", href: "https://HyperSU.org/" }],
+    ["link", { rel: "canonical", href: "https://hypersu.top/" }],
+    ["link", { rel: "alternate", hreflang: "en", href: "https://hypersu.top/" }],
+    ["link", { rel: "alternate", hreflang: "zh-CN", href: "https://hypersu.top/zh-Hans/" }],
+    ["link", { rel: "alternate", hreflang: "x-default", href: "https://hypersu.top/" }],
     ["link", { rel: "preconnect", href: "https://cdn.jsdelivr.net/" }],
     [
       "link",
@@ -92,8 +92,8 @@ export default defineConfig({
     ],
     ["meta", { property: "og:type", content: "website" }],
     ["meta", { property: "og:site_name", content: "HyperSU" }],
-    ["meta", { property: "og:url", content: "https://HyperSU.org/" }],
-    ["meta", { property: "og:image", content: "https://HyperSU.org/logo.svg" }],
+    ["meta", { property: "og:url", content: "https://hypersu.top/" }],
+    ["meta", { property: "og:image", content: "https://hypersu.top/logo.svg" }],
     ["meta", { property: "og:image:alt", content: "HyperSU Logo" }],
     ["meta", { property: "og:image:width", content: "512" }],
     ["meta", { property: "og:image:height", content: "512" }],
@@ -108,7 +108,7 @@ export default defineConfig({
         content: "A kernel-level ROOT solution for Android built on KernelSU, focused on stability and Non-GKI compatibility.",
       },
     ],
-    ["meta", { name: "twitter:image", content: "https://HyperSU.org/logo.svg" }],
+    ["meta", { name: "twitter:image", content: "https://hypersu.top/logo.svg" }],
     ["meta", { name: "twitter:image:alt", content: "HyperSU Logo" }],
     [
       "script",
@@ -119,14 +119,14 @@ export default defineConfig({
           {
             "@type": "Organization",
             name: "HyperSU",
-            url: "https://HyperSU.org/",
-            logo: "https://HyperSU.org/logo.svg",
+            url: "https://hypersu.top/",
+            logo: "https://hypersu.top/logo.svg",
             sameAs: ["https://github.com/HyperSU-Team"],
           },
           {
             "@type": "WebSite",
             name: "HyperSU",
-            url: "https://HyperSU.org/",
+            url: "https://hypersu.top/",
             inLanguage: ["en", "zh-CN"],
           },
         ],
