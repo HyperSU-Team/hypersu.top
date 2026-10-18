@@ -9,7 +9,7 @@
         "@nolebase/vitepress-plugin-enhanced-mark": "^2.18.2",
         "@nolebase/vitepress-plugin-enhanced-readabilities": "^2.18.2",
         "@nolebase/vitepress-plugin-git-changelog": "^2.18.2",
-        "@nolebase/vitepress-plugin-highlight-targeted-heading": "^2.18.2",
+        "@nolebase/vitepress-plugin-highlight-targeted-heading": "^2.21.1",
         "@nolebase/vitepress-plugin-inline-link-preview": "^2.18.2",
         "cloudflare-error-page": "^0.1.0",
         "markdown-it-autospace": "^1.1.4",
@@ -73,7 +73,7 @@
 
     "@nolebase/vitepress-plugin-git-changelog": ["@nolebase/vitepress-plugin-git-changelog@2.18.2", "", { "dependencies": { "@iconify-json/octicon": "^1.2.10", "@nolebase/ui": "^2.18.2", "colorette": "^2.0.20", "date-fns": "^4.1.0", "defu": "^6.1.4", "es-toolkit": "^1.39.9", "execa": "^9.6.0", "globby": "^14.1.0", "gray-matter": "^4.0.3", "less": "^4.4.0", "uncrypto": "^0.1.3" }, "peerDependencies": { "vitepress": "^1.5.0 || ^2.0.0-alpha.1" } }, "sha512-TT1nxP+iS+5K8OLtkEr1EZ4bhCa4iqggly0JTD7TsO01hcwzMovr0lRaxPTo/4i/0bwMiPcaKxpKJ2zJIiu4Kw=="],
 
-    "@nolebase/vitepress-plugin-highlight-targeted-heading": ["@nolebase/vitepress-plugin-highlight-targeted-heading@2.18.2", "", { "dependencies": { "less": "^4.4.0" }, "peerDependencies": { "vitepress": "^1.5.0 || ^2.0.0-alpha.1" } }, "sha512-RVrT7FgyjxrnFFR9twc1OJI/5B09+biVbSiO36Yiu2YC+kRMz1Mb553l2DyioLtWJgVNTJ7sj66ZJi40JpDh7g=="],
+    "@nolebase/vitepress-plugin-highlight-targeted-heading": ["@nolebase/vitepress-plugin-highlight-targeted-heading@2.21.1", "", { "dependencies": { "less": "^4.9.1" }, "peerDependencies": { "vitepress": "^2.0.0-alpha.20" } }, "sha512-klxj8CepfQaBUBkYUAk3ZYnbC4Hl0q26DwprX2TCkNgD/utDF3q4Z+4yIbn5t6cWRuUzqKqy4lU74HL2rM3OtQ=="],
 
     "@nolebase/vitepress-plugin-inline-link-preview": ["@nolebase/vitepress-plugin-inline-link-preview@2.18.2", "", { "dependencies": { "@iconify-json/icon-park-outline": "^1.2.2", "@iconify-json/octicon": "^1.2.10", "@iconify-json/svg-spinners": "^1.2.2", "@nolebase/markdown-it-element-transform": "^2.18.2", "@nolebase/ui": "^2.18.2", "less": "^4.4.0", "markdown-it": "^14.1.0", "markdown-it-attrs": "^4.3.1" }, "peerDependencies": { "vitepress": "^1.5.0 || ^2.0.0-alpha.1" } }, "sha512-4hYW5uAYafv0NzZ5Rg78MFmBrT3R7DfCsWdlwH7D1KStZDqo40OYLk9/eOPlmuvpAU8rDfxz5dhMyw8tzxZVtg=="],
 
