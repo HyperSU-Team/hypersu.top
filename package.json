@@ -24,7 +24,7 @@
     "markdown-it-autospace": "^1.1.4",
     "vitepress": "~2.0.0-alpha.20",
     "vitepress-plugin-codeblocks-fold": "^1.2.35",
-    "vue": "^3.5.43"
+    "vue": "^3.5.44"
   },
   "devDependencies": {
     "typescript": "^6.0.3",
