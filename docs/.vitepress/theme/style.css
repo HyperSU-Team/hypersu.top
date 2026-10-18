@@ -108,30 +108,37 @@
 }
 
 .VPHero {
-  padding-bottom: 64px !important;
+  /* A little more room above the block and less below it, so the title sits higher in the
+     viewport instead of being pushed down by its own line box. */
+  padding-top: 16px !important;
+  padding-bottom: 56px !important;
 }
 
 .VPHero .name {
-  font-size: 3.5rem !important;
+  /* Smaller than the stock 5.5rem. "HyperSU" is a short word, so at that size the glyphs
+     dominate the block and the line box pushes the rest of the hero down. */
+  font-size: 3rem !important;
   line-height: 1.1 !important;
   letter-spacing: -0.02em !important;
 }
 
-@media (min-width: 640px) { .VPHero .name { font-size: 4.5rem !important; } }
-@media (min-width: 960px) { .VPHero .name { font-size: 5.5rem !important; } }
+@media (min-width: 640px) { .VPHero .name { font-size: 3.75rem !important; } }
+@media (min-width: 960px) { .VPHero .name { font-size: 4.25rem !important; } }
 
 .VPHero .text {
-  font-size: 1.25rem !important;
+  font-size: 1.15rem !important;
   color: var(--vp-c-text-2);
   font-weight: 500;
+  margin-top: 4px !important;
 }
 
-@media (min-width: 640px) { .VPHero .text { font-size: 1.5rem !important; } }
+@media (min-width: 640px) { .VPHero .text { font-size: 1.35rem !important; } }
 
 .VPHero .tagline {
-  font-size: 1.1rem !important;
+  font-size: 1rem !important;
   opacity: 0.75;
   font-weight: 400;
+  margin-top: 4px !important;
 }
 
 .VPHero .actions .VPButton {
