@@ -1,0 +1,703 @@
+---
+cbf: [4] # 在弃置hook中要禁用代码折叠，插件会搞出渲染问题的
+---
+
+# 手动集成参考 {#hooks}
+
+## 手动挂钩 {#scope-minimized-hooks}
+
+::: danger Notice：
+HyperSU 将会检查此处每一条 hook，如果缺少，将会**导致编译失败**
+:::
+
+:::info 提示
+这一部分的钩子，改编于 [`backslashxx/KernelSU #5`](https://github.com/backslashxx/KernelSU/issues/5)
+:::
+
+### stat hook <Badge type="danger" text="必加"/> {#stat-hook}
+
+::: code-group
+```diff [stat.c]
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@ -353,6 +353,10 @@ SYSCALL_DEFINE2(newlstat, const char __user *, filename,
+ 	return cp_new_stat(&stat, statbuf);
+ }
+ 
++#ifdef CONFIG_KSU_MANUAL_HOOK
++__attribute__((hot)) 
++extern int ksu_handle_stat(int *dfd, const char __user **filename_user,
++				int *flags);
++
++extern void ksu_handle_newfstat_ret(unsigned int *fd, struct stat __user **statbuf_ptr);
++#if defined(__ARCH_WANT_STAT64) || defined(__ARCH_WANT_COMPAT_STAT64)
++extern void ksu_handle_fstat64_ret(unsigned long *fd, struct stat64 __user **statbuf_ptr); // optional
++#endif
++#endif
++
+ #if !defined(__ARCH_WANT_STAT64) || defined(__ARCH_WANT_SYS_NEWFSTATAT)
+ SYSCALL_DEFINE4(newfstatat, int, dfd, const char __user *, filename,
+ 		struct stat __user *, statbuf, int, flag)
+@@ -360,6 +364,9 @@ SYSCALL_DEFINE4(newfstatat, int, dfd, const char __user *, filename,
+ 	struct kstat stat;
+ 	int error;
+ 
++#ifdef CONFIG_KSU_MANUAL_HOOK
++	ksu_handle_stat(&dfd, &filename, &flag);
++#endif
+ 	error = vfs_fstatat(dfd, filename, &stat, flag);
+ 	if (error)
+ 		return error;
+@@ -504,6 +511,9 @@ SYSCALL_DEFINE4(fstatat64, int, dfd, const char __user *, filename,
+ 	struct kstat stat;
+ 	int error;
+ 
++#ifdef CONFIG_KSU_MANUAL_HOOK // 32-bit su
++	ksu_handle_stat(&dfd, &filename, &flag); 
++#endif
+ 	error = vfs_fstatat(dfd, filename, &stat, flag);
+ 	if (error)
+ 		return error;
+
+@@ -364,X +364,XX @@  
+SYSCALL_DEFINE2(newfstat, unsigned int, fd, struct stat __user *, statbuf)
+{
+	struct kstat stat;
+	int error = vfs_fstat(fd, &stat);
+
+	if (!error)
+		error = cp_new_stat(&stat, statbuf);
+
++#ifdef CONFIG_KSU_MANUAL_HOOK
++	ksu_handle_newfstat_ret(&fd, &statbuf);
++#endif
+	return error;
+
+ 
+@@ -490,X +497,X @@
+SYSCALL_DEFINE2(fstat64, unsigned long, fd, struct stat64 __user *, statbuf)
+{
+	struct kstat stat;
+	int error = vfs_fstat(fd, &stat);
+
+	if (!error)
+		error = cp_new_stat64(&stat, statbuf);
+
++#ifdef CONFIG_KSU_MANUAL_HOOK // for 32-bit
++	ksu_handle_fstat64_ret(&fd, &statbuf);
++#endif
+	return error;
+}
+```
+:::
+
+在 `fs/stat.c` 中，你需要找到 `newfstatat` 和 `fstatat64`（如果支持 32-bit su）并 hook 它们。你还需要 hook `newfstat` 和 `fstat64`（如果支持 32-bit su）以获取返回值。
+
+### execve hook <Badge type="danger" text="必加"/> {#execve-hooks}
+
+对于此 hook，不同版本内核不一致，此处单独说明
+
+::: code-group
+
+```diff [3.14+]
+diff --git a/fs/exec.c b/fs/exec.c
+index 90e14cdddb88..0bcde889d7b9
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1898,12 +1898,31 @@ static int __do_execve_file(int fd, struct filename *filename,
+ 	return retval;
+ }
+ 
++#ifdef CONFIG_KSU_MANUAL_HOOK
++__attribute__((hot))
++extern int ksu_handle_execveat(int *fd, struct filename **filename_ptr,
++				void *argv, void *envp, int *flags);
++__attribute__((hot))
++extern int ksu_handle_post_execveat(int *fd, struct filename **filename_ptr,
++				void *argv, void *envp, int *flags, int *retval);
++#endif
++
+ static int do_execveat_common(int fd, struct filename *filename,
+ 			      struct user_arg_ptr argv,
+ 			      struct user_arg_ptr envp,
+ 			      int flags)
+ {
++#ifdef CONFIG_KSU_MANUAL_HOOK
++	int retval;
++	ksu_handle_execveat(&fd, &filename, &argv, &envp, &flags);
++	
++	retval = __do_execve_file(fd, filename, argv, envp, flags, NULL);
++	
++	ksu_handle_post_execveat(&fd, &filename, &argv, &envp, &flags, &retval);
++	
++	return retval;
++#else
+ 	return __do_execve_file(fd, filename, argv, envp, flags, NULL);
++#endif
+ }
+ 
+ int do_execve_file(struct file *file, void *__argv, void *__envp)
+```
+```diff [3.14-]
+diff --git a/exec.c b/exec.c
+index 7ea097f..591dc94
+--- a/exec.c
++++ b/exec.c
+@@ -1443,6 +1443,15 @@ static int exec_binprm(struct linux_binprm *bprm)
+ 	return ret;
+ }
+ 
++#ifdef CONFIG_KSU_MANUAL_HOOK
++__attribute__((hot))
++extern int ksu_handle_execve(int *fd, const char *filename,
++				void *argv, void *envp, int *flags);
++__attribute__((hot))
++extern int ksu_handle_post_execve(int *fd, const char *filename, 
++				void *argv, void *envp, int *flags, int *retval)
++#endif
++
+ /*
+  * sys_execve() executes a new program.
+  */
+@@ -1455,6 +1464,9 @@ static int do_execve_common(const char *filename,
+ 	struct files_struct *displaced;
+ 	bool clear_in_exec;
+ 	int retval;
++#ifdef CONFIG_KSU_MANUAL_HOOK
++	ksu_handle_execve((int *)AT_FDCWD, filename, &argv, &envp, 0);
++#endif
+ 
+ 	/*
+ 	 * We move the actual failure in case of RLIMIT_NPROC excess from
+@@ -1569,6 +1581,9 @@ out_files:
+ 	if (displaced)
+ 		reset_files_struct(displaced);
+ out_ret:
++#ifdef CONFIG_KSU_MANUAL_HOOK
++	ksu_handle_post_execve((int *)AT_FDCWD, &filename, &argv, &envp, 0, &retval);
++#endif
+ 	return retval;
+ }
+ 
+```
+:::
+
+::: details 弃置 hook (3.14+)
+
+这个hook不推荐在Android 17 QPR2及以上的系统中使用！ 否则无法获取root！
+
+```diff [3.14+]
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1837,13 +1837,32 @@ static int do_execveat_common(int fd, struct filename *filename,
+   return retval;
+ }
+ 
++#ifdef CONFIG_KSU_MANUAL_HOOK
++attribute((hot))
++extern int ksu_handle_execveat(int *fd, struct filename **filename_ptr,
++        void *argv, void *envp, int *flags);
++attribute((hot))
++extern int ksu_handle_post_execveat(int *fd, struct filename **filename_ptr,
++        void *argv, void *envp, int *flags, int *retval);
++#endif
++
++
+ int do_execve(struct filename *filename,
+   const char __user *const __user *__argv,
+   const char __user *const __user *__envp)
+ {
+   struct user_arg_ptr argv = { .ptr.native = __argv };
+   struct user_arg_ptr envp = { .ptr.native = __envp };
++#ifdef CONFIG_KSU_MANUAL_HOOK
++  int retval;
++  ksu_handle_execveat((int *)AT_FDCWD, &filename, &argv, &envp, 0);
++  retval = do_execveat_common(AT_FDCWD, filename, argv, envp, 0);
++
++  ksu_handle_post_execveat((int *)AT_FDCWD, &filename, &argv, &envp, 0, &retval);
++  return retval;
++#else
+   return do_execveat_common(AT_FDCWD, filename, argv, envp, 0);
++#endif
++
+ }
+ 
+ int do_execveat(int fd, struct filename *filename,
+ 
+@@ -1870,7 +1888,17 @@ static int compat_do_execve(struct filename *filename,
+     .is_compat = true,
+     .ptr.compat = __envp,
+   };
++#ifdef CONFIG_KSU_MANUAL_HOOK // 32-bit ksud and 32-on-64 support
++  int retval;
++  ksu_handle_execveat((int *)AT_FDCWD, &filename, &argv, &envp, 0);
++
++  retval = do_execveat_common(AT_FDCWD, filename, argv, envp, 0);
++
++  ksu_handle_post_execveat((int *)AT_FDCWD, &filename, &argv, &envp, 0, &retval);
++  return retval;
++#else
+   return do_execveat_common(AT_FDCWD, filename, argv, envp, 0);
++#endif
+ }
+ 
+```
+:::
+
+对于 3.14+ 的内核，请使用 `ksu_handle_execveat` 和 `ksu_handle_post_execveat`，并在 `fs/exec.c` 中 hook `do_execveat_common`。
+
+对于 3.14+ 弃置 hook，请在 `fs/exec.c` 中找到 `do_execve` 并进行 hook。如果需要支持 32 位 `su` 或 32-on-64，还需要在同一文件中 hook `compat_do_execve`。
+
+对于 3.14- 的内核，请使用 `ksu_handle_execve` 和 `ksu_handle_post_execve` 而不是 `ksu_handle_execveat` 和 `ksu_handle_post_execveat`，并在 `fs/exec.c` 中 hook `do_execve` 和 `compat_do_execve`。
+
+如果旧版内核的 `do_execve_common` 使用 `struct filename` 而不是 `char filename`，请参照 3.14 及以上版本的 hook 方式。
+
+### faccessat hook <Badge type="danger" text="必加"/> {#faccessat-hook}
+
+对于此 hook，不同版本内核不一致，此处单独说明
+
+::: code-group
+
+```diff [4.19+]
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -450,8 +450,16 @@ long do_faccessat(int dfd, const char __user *filename, int mode)
+ 	return res;
+ }
+ 
++#ifdef CONFIG_KSU_MANUAL_HOOK
++__attribute__((hot)) 
++extern int ksu_handle_faccessat(int *dfd, const char __user **filename_user,
++				int *mode, int *flags);
++#endif
++
+ SYSCALL_DEFINE3(faccessat, int, dfd, const char __user *, filename, int, mode)
+ {
++#ifdef CONFIG_KSU_MANUAL_HOOK
++	ksu_handle_faccessat(&dfd, &filename, &mode, NULL);
++#endif
+ 	return do_faccessat(dfd, filename, mode);
+ }
+```
+```diff [4.19-]
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -354,6 +354,11 @@ SYSCALL_DEFINE4(fallocate, int, fd, int, mode, loff_t, offset, loff_t, len)
+ 	return error;
+ }
+ 
++#ifdef CONFIG_KSU_MANUAL_HOOK
++__attribute__((hot)) 
++extern int ksu_handle_faccessat(int *dfd, const char __user **filename_user,
++				int *mode, int *flags);
++#endif
++
+ /*
+  * access() needs to use the real uid/gid, not the effective uid/gid.
+  * We do this by temporarily clearing all FS-related capabilities and
+@@ -369,6 +374,10 @@ SYSCALL_DEFINE3(faccessat, int, dfd, const char __user *, filename, int, mode)
+ 	int res;
+ 	unsigned int lookup_flags = LOOKUP_FOLLOW;
+ 
++#ifdef CONFIG_KSU_MANUAL_HOOK
++	ksu_handle_faccessat(&dfd, &filename, &mode, NULL);
++#endif
++
+ 	if (mode & ~S_IRWXO)	/* where's F_OK, X_OK, W_OK, R_OK? */
+ 		return -EINVAL;
+```
+:::
+
+在这部分中，你需要在 `fs/open.c` 中找到 `faccessat` 的 SYSCALL 并 hook 它。
+
+### sys_reboot hook <Badge type="danger" text="必加"/> {#sys-reboot-hook}
+对于此 hook，不同版本内核不一致，此处单独说明
+
+::: code-group
+
+```diff [3.11+]
+--- a/kernel/reboot.c
++++ b/kernel/reboot.c
+@@ -277,6 +277,11 @@ static DEFINE_MUTEX(reboot_mutex);
+  *
+  * reboot doesn't sync: do that yourself before calling this.
+  */
++
++#ifdef CONFIG_KSU_MANUAL_HOOK
++extern int ksu_handle_sys_reboot(int magic1, int magic2, unsigned int cmd, void __user **arg);
++#endif
++
+ SYSCALL_DEFINE4(reboot, int, magic1, int, magic2, unsigned int, cmd,
+ 		void __user *, arg)
+ {
+@@ -284,6 +289,9 @@ SYSCALL_DEFINE4(reboot, int, magic1, int, magic2, unsigned int, cmd,
+ 	char buffer[256];
+ 	int ret = 0;
+ 
++#ifdef CONFIG_KSU_MANUAL_HOOK
++	ksu_handle_sys_reboot(magic1, magic2, cmd, &arg);
++#endif
+ 	/* We only trust the superuser with rebooting the system. */
+ 	if (!ns_capable(pid_ns->user_ns, CAP_SYS_BOOT))
+ 		return -EPERM;
+```
+
+```diff [3.11-]
+diff --git a/kernel/sys.c b/kernel/sys.c
+index a3bef5bd..08d196f5 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -455,6 +455,10 @@ EXPORT_SYMBOL_GPL(kernel_power_off);
+
+ static DEFINE_MUTEX(reboot_mutex);
+
++#ifdef CONFIG_KSU_MANUAL_HOOK
++extern int ksu_handle_sys_reboot(int magic1, int magic2, unsigned int cmd, void __user **arg);
++#endif
++
+ /*
+  * Reboot system call: for obvious reasons only root may call it,
+  * and even root needs to set up some magic numbers in the registers
+@@ -470,6 +474,10 @@ SYSCALL_DEFINE4(reboot, int, magic1, int, magic2, unsigned int, cmd,
+        char buffer[256];
+        int ret = 0;
+
++#ifdef CONFIG_KSU_MANUAL_HOOK
++       ksu_handle_sys_reboot(magic1, magic2, cmd, &arg);
++#endif
++
+        /* We only trust the superuser with rebooting the system. */
+        if (!ns_capable(pid_ns->user_ns, CAP_SYS_BOOT))
+                return -EPERM;
+```
+:::
+
+在这部分中，你需要在内核源码中找到 `reboot`的 SYSCALL 并 hook 它。注意对于 3.11- 内核，你需要在 `kernel/sys.c` 中 hook `reboot`，而不是在 `kernel/reboot.c` 中。
+
+### input hook <Badge type="tip" text="按需必加"/> {#input-hook}
+:::warning 一般无需此手动 hook
+对于 input handler 未损坏的内核，只需保证 `CONFIG_KSU_MANUAL_HOOK_AUTO_INPUT_HOOK` 处于启用状态，此 hook 即可通过 Linux 内核的 `input_handler` 特性自动应用
+:::
+
+::: code-group
+```diff [input.c]
+--- a/drivers/input/input.c
++++ b/drivers/input/input.c
+@@ -436,11 +436,22 @@ static void input_handle_event(struct input_dev *dev,
+  * to 'seed' initial state of a switch or initial position of absolute
+  * axis, etc.
+  */
++#ifdef CONFIG_KSU_MANUAL_HOOK
++extern bool ksu_input_hook __read_mostly;
++extern __attribute__((cold)) int ksu_handle_input_handle_event(
++			unsigned int *type, unsigned int *code, int *value);
++#endif
++
+ void input_event(struct input_dev *dev,
+ 		 unsigned int type, unsigned int code, int value)
+ {
+ 	unsigned long flags;
+ 
++#ifdef CONFIG_KSU_MANUAL_HOOK
++	if (unlikely(ksu_input_hook))
++		ksu_handle_input_handle_event(&type, &code, &value);
++#endif
++
+ 	if (is_event_supported(type, dev->evbit, EV_MAX)) {
+ 
+ 		spin_lock_irqsave(&dev->event_lock, flags);
+```
+:::
+
+在这部分中，你需要在 `drivers/input/input.c` 中找到 `input_event` 并 hook 它。
+
+### setuid hook <Badge type="warning" text="6.8+ 必加"/> {#setuid-hook}
+:::warning 大部分版本不需要此手动 hook
+对于 6.8(不包括6.8)以下 的内核，只需保证 `CONFIG_KSU_MANUAL_HOOK_AUTO_SETUID_HOOK` 处于启用状态，此 hook 即可通过 LSM 自动应用
+:::
+
+::: code-group
+```diff [4.17+]
+diff --git a/kernel/sys.c b/kernel/sys.c
+index 4a87dc5fa..aac25df8c 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -679,6 +679,10 @@ SYSCALL_DEFINE1(setuid, uid_t, uid)
+ }
+
+
++#ifdef CONFIG_KSU_MANUAL_HOOK
++extern int ksu_handle_setresuid(uid_t ruid, uid_t euid, uid_t suid);
++#endif
++
+ /*
+  * This function implements a generic ability to update ruid, euid,
+  * and suid.  This allows you to implement the 4.4 compatible seteuid().
+@@ -692,6 +696,10 @@ long __sys_setresuid(uid_t ruid, uid_t euid, uid_t suid)
+        kuid_t kruid, keuid, ksuid;
+        bool ruid_new, euid_new, suid_new;
+
++#ifdef CONFIG_KSU_MANUAL_HOOK
++       (void)ksu_handle_setresuid(ruid, euid, suid);
++#endif
++
+        kruid = make_kuid(ns, ruid);
+        keuid = make_kuid(ns, euid);
+        ksuid = make_kuid(ns, suid);
+```
+```diff [4.17-]
+diff --git a/kernel/sys.c b/kernel/sys.c
+index a3bef5bd..0b116d7c 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -835,6 +843,9 @@ error:
+        return retval;
+ }
+
++#ifdef CONFIG_KSU_MANUAL_HOOK
++extern int ksu_handle_setresuid(uid_t ruid, uid_t euid, uid_t suid);
++#endif
+
+ /*
+  * This function implements a generic ability to update ruid, euid,
+@@ -848,6 +859,10 @@ SYSCALL_DEFINE3(setresuid, uid_t, ruid, uid_t, euid, uid_t, suid)
+        int retval;
+        kuid_t kruid, keuid, ksuid;
+
++#ifdef CONFIG_KSU_MANUAL_HOOK
++       (void)ksu_handle_setresuid(ruid, euid, suid);
++#endif
++
+        kruid = make_kuid(ns, ruid);
+        keuid = make_kuid(ns, euid);
+        ksuid = make_kuid(ns, suid);
+```
+:::
+
+在这部分中，你需要在内核源码中找到 `__sys_setresuid`并 hook 它。注意对于 4.17- 内核，你需要 hook `setresuid` 而不是 `__sys_setresuid`。
+
+### sys_read hook <Badge type="warning" text="6.8+ 必加"/> {#sys-read-hook}
+
+:::warning 大部分版本不需要此手动 hook
+对于 6.8(不包括6.8)以下 的内核，只需保证 `CONFIG_KSU_MANUAL_HOOK_AUTO_INITRC_HOOK` 处于启用状态，此 hook 即可通过 LSM 自动应用
+:::
+
+::: code-group
+```diff [4.19+]
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -586,8 +586,18 @@ ssize_t ksys_read(unsigned int fd, char __user *buf, size_t count)
+ 	return ret;
+ }
+ 
++#ifdef CONFIG_KSU_MANUAL_HOOK
++extern bool ksu_init_rc_hook __read_mostly;
++extern __attribute__((cold)) int ksu_handle_sys_read(unsigned int fd,
++				char __user **buf_ptr, size_t *count_ptr);
++#endif
++
+ SYSCALL_DEFINE3(read, unsigned int, fd, char __user *, buf, size_t, count)
+ {
++#ifdef CONFIG_KSU_MANUAL_HOOK
++	if (unlikely(ksu_init_rc_hook)) 
++		ksu_handle_sys_read(fd, &buf, &count);
++#endif
+ 	return ksys_read(fd, buf, count);
+ }
+```
+```diff [4.19-]
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -568,11 +568,21 @@ static inline void file_pos_write(struct file *file, loff_t pos)
+ 		file->f_pos = pos;
+ }
+ 
++#ifdef CONFIG_KSU_MANUAL_HOOK
++extern bool ksu_init_rc_hook __read_mostly;
++extern __attribute__((cold)) int ksu_handle_sys_read(unsigned int fd,
++				char __user **buf_ptr, size_t *count_ptr);
++#endif
++
+ SYSCALL_DEFINE3(read, unsigned int, fd, char __user *, buf, size_t, count)
+ {
+ 	struct fd f = fdget_pos(fd);
+ 	ssize_t ret = -EBADF;
+ 
++#ifdef CONFIG_KSU_MANUAL_HOOK
++	if (unlikely(ksu_init_rc_hook)) 
++		ksu_handle_sys_read(fd, &buf, &count);
++#endif
+ 	if (f.file) {
+ 		loff_t pos = file_pos_read(f.file);
+ 		ret = vfs_read(f.file, buf, count, &pos);
+```
+:::
+
+在这部分中，你需要在 `fs/read_write.c` 中找到 `read` 的 `SYSCALL` 并 hook 它。
+
+## 静态符号导出 {#static-symbol-export}
+
+::: tip 温馨提示
+您可选择启用 `CONFIG_KALLSYMS_ALL` 内核配置，来避免需要进行此部分操作
+:::
+
+::: danger Notice：
+在内核未开启 `CONFIG_KALLSYMS_ALL` 配置下，HyperSU 将会检查此处每一条 export，如果缺少，将会**导致编译失败**
+:::
+
+### write_op export <Badge type="danger" text="必加"/>
+
+```diff
+--- a/security/selinux/selinuxfs.c
++++ b/security/selinux/selinuxfs.c
+@@ -XXXX,X +XXXX,X @@
+-static ssize_t (*write_op[])(struct file *, char *, size_t) = {
++ssize_t (*write_op[])(struct file *, char *, size_t) = {
+	[SEL_ACCESS] = sel_write_access,
+	[SEL_CREATE] = sel_write_create,
+```
+
+在 `security/selinux/selinuxfs.c` 中找到 `write_op` 的定义，并将其前面的 `static` 关键字去掉。
+
+### sel_handle_status_ops export <Badge type="danger" text="必加"/>
+
+```diff
+--- a/security/selinux/selinuxfs.c
++++ b/security/selinux/selinuxfs.c
+@@ -XXXX,X +XXXX,X @@
+-static const struct file_operations sel_handle_status_ops = {
++const struct file_operations sel_handle_status_ops = {
+	.open		= sel_open_handle_status,
+	.read		= sel_read_handle_status,
+	.mmap		= sel_mmap_handle_status,
+```
+在 `security/selinux/selinuxfs.c` 中找到 `sel_handle_status_ops` 的定义，并将其前面的 `static` 关键字去掉。
+
+### selinux_status_page & selinux_status_lock export <Badge type="warning" text="4.17- 按需添加"/>
+
+::: info
+在内核没有 `selinux_state` 结构体下，你需要对`selinux_status_page` 和 `selinux_status_lock`定义进行修改
+:::
+
+```diff
+--- a/security/selinux/ss/status.c
++++ b/security/selinux/ss/status.c
+@@ -XXXX,X +XXXX,X @@
+ * In most cases, application shall confirm the kernel status is not
+ * changed without any system call invocations.
+ */
+-static struct page *selinux_status_page;
+-static DEFINE_MUTEX(selinux_status_lock);
++struct page *selinux_status_page;
++DEFINE_MUTEX(selinux_status_lock);
+```
+
+在 `security/selinux/ss/status.c` 中找到 `selinux_status_page` 和 `selinux_status_lock` 的定义，并将其前面的 `static` 关键字去掉。
+
+如果没有找到该定义，请忽略这一部分。
+
+### policy_rwlock export <Badge type="warning" text="4.17- 按需添加"/> {#policy-rwlock-export}
+
+::: info
+在内核没有 `selinux_state` 结构体下，你需要对`policy_rwlock`定义进行修改
+:::
+
+```diff
+diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
+index b818410d2418..ea2f3022744f 100644
+--- a/security/selinux/ss/services.c
++++ b/security/selinux/ss/services.c
+@@ -76,7 +76,7 @@ int selinux_policycap_netpeer;
+ int selinux_policycap_openperm;
+ int selinux_policycap_alwaysnetwork;
+ 
+-static DEFINE_RWLOCK(policy_rwlock);
++DEFINE_RWLOCK(policy_rwlock);
+ 
+ static struct sidtab sidtab;
+ struct policydb policydb;
+
+```
+
+在 `security/selinux/ss/services.c` 中找到 `policy_rwlock` 的定义，并将其前面的 `static` 关键字去掉。
+
+如果没有找到该定义，请忽略这一部分。
+
+### sel_mutex export <Badge type="warning" text="4.17- 按需添加"/> {#sel-mutex-export}
+
+::: info
+在内核没有 `selinux_state` 结构体下，你需要对`sel_mutex`定义进行修改
+:::
+
+```diff
+--- a/security/selinux/selinuxfs.c
++++ b/security/selinux/selinuxfs.c
+@@ -41,23 +42,6 @@
+ #include "objsec.h"
+ #include "conditional.h
+-static DEFINE_MUTEX(sel_mutex);
++DEFINE_MUTEX(sel_mutex);
+```
+
+在 `security/selinux/selinuxfs.c` 中找到 `sel_mutex` 的定义，并将其前面的 `static` 关键字去掉。
+
+如果没有找到该定义，请忽略这一部分。
+
+### selinux_ops export <Badge type="danger" text="4.2- 必加"/> {#selinux-ops-export}
+
+```diff
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -XXXX,X +XXXX,X @@
+-static struct security_operations selinux_ops = {
++struct security_operations selinux_ops = {
+   .name =        "selinux",
+```
+
+在 `security/selinux/hooks.c` 中找到 `selinux_ops` 的结构体定义，并将其前面的 `static` 关键字去掉。
+
+### security_dump_masked_av <Badge type="danger" text="6.6+ 必加"/>
+
+```diff
+diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
+--- a/security/selinux/ss/services.c
++++ b/security/selinux/ss/services.c
+@@ -XXXX,X +XXXX,X @@
+-static void security_dump_masked_av(struct policydb *policydb,
++void security_dump_masked_av(struct policydb *policydb,
+				    struct context *scontext,
+				    struct context *tcontext,
+				    u16 tclass,
+				    u32 permissions,
+				    const char *reason)
+{
+	struct common_datum *common_dat;
+	struct class_datum *tclass_dat;
+```
+
+在 `security/selinux/ss/services.c` 中找到 `security_dump_masked_av` 的定义，并将其前面的 `static` 关键字去掉。
+
+
+### context_struct_compute_av <Badge type="danger" text="6.6+ 必加"/>
+
+```diff
+diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
+--- a/security/selinux/ss/services.c
++++ b/security/selinux/ss/services.c
+@@ -XXXX,X +XXXX,X @@
+/*
+ * Compute access vectors and extended permissions based on a context
+ * structure pair for the permissions in a particular class.
+ */
+-static void context_struct_compute_av(struct policydb *policydb,
++void context_struct_compute_av(struct policydb *policydb,
+
+				      struct context *scontext,
+				      struct context *tcontext,
+				      u16 tclass,
+				      struct av_decision *avd,
+				      struct extended_perms *xperms)
+{
+```
+
+在 `security/selinux/ss/services.c` 中找到 `context_struct_compute_av` 的定义，并将其前面的 `static` 关键字去掉。
