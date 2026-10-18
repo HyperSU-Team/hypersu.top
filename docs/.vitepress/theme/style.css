@@ -118,16 +118,16 @@
    * up under the bar - the title was clipped. Whatever this becomes, it has to keep the
    * nav-height term.
    *
-   * The extra space above the title is halved (5rem -> 2.5rem on desktop, 3rem -> 1.5rem on
-   * phones), which lifts the block without touching the room the bar needs.
+   * The extra space is slightly under the stock 5rem: enough that the title clears the bar with
+   * a comfortable margin, without the block sitting as low as it did by default.
    */
-  padding-top: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 1.5rem) !important;
+  padding-top: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 2.5rem) !important;
   padding-bottom: 3rem !important;
 }
 
 @media (min-width: 640px) {
   .VPHero {
-    padding-top: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 2.5rem) !important;
+    padding-top: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 4rem) !important;
   }
 }
 
