@@ -108,10 +108,27 @@
 }
 
 .VPHero {
-  /* A little more room above the block and less below it, so the title sits higher in the
-     viewport instead of being pushed down by its own line box. */
-  padding-top: 16px !important;
-  padding-bottom: 56px !important;
+  /*
+   * The stock rule is
+   *
+   *   padding: calc(var(--vp-nav-height) + var(--vp-layout-top-height) + 5rem) 4rem 4rem
+   *
+   * and that first term is what reserves room for the fixed nav bar. An earlier override set
+   * padding-top to a small literal (16px), which dropped the reservation and let the hero slide
+   * up under the bar - the title was clipped. Whatever this becomes, it has to keep the
+   * nav-height term.
+   *
+   * The extra space above the title is halved (5rem -> 2.5rem on desktop, 3rem -> 1.5rem on
+   * phones), which lifts the block without touching the room the bar needs.
+   */
+  padding-top: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 1.5rem) !important;
+  padding-bottom: 3rem !important;
+}
+
+@media (min-width: 640px) {
+  .VPHero {
+    padding-top: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 2.5rem) !important;
+  }
 }
 
 .VPHero .name {
