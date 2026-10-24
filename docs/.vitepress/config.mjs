@@ -56,6 +56,7 @@ export default defineConfig({
         content: "PFExExHEiCGSrImS-yWoSnddXHrVHFmejD_kcS1g6AY",
       },
     ],
+
     ["meta", { name: "robots", content: "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" }],
     [
       "meta",
@@ -67,6 +68,7 @@ export default defineConfig({
     ["meta", { name: "theme-color", content: "#ec4899", media: "(prefers-color-scheme: light)" }],
     ["meta", { name: "theme-color", content: "#f472b6", media: "(prefers-color-scheme: dark)" }],
     ["meta", { name: "color-scheme", content: "light dark" }],
+
     [
       "meta",
       {
@@ -78,6 +80,7 @@ export default defineConfig({
     ["meta", { name: "application-name", content: "HyperSU" }],
     ["meta", { name: "apple-mobile-web-app-title", content: "HyperSU" }],
     ["meta", { name: "apple-mobile-web-app-status-bar-style", content: "default" }],
+
     ["meta", { property: "og:title", content: "HyperSU - 面向Android的内核级Root方案 | 支持KernelSU与SukiSU Ultra特性" }],
     [
       "meta",
@@ -96,6 +99,7 @@ export default defineConfig({
     ["meta", { property: "og:locale", content: "en_US" }],
     ["meta", { property: "og:locale:alternate", content: "zh_CN" }],
     ["meta", { name: "twitter:card", content: "summary_large_image" }],
+    
     ["meta", { name: "twitter:title", content: "HyperSU - 面向Android的内核级Root方案 | 支持KernelSU与SukiSU Ultra特性" }],
     [
       "meta",
@@ -131,6 +135,8 @@ export default defineConfig({
   ],
 
   themeConfig: {
+    siteTitle: "HyperSU",
+    
     logo: "/favicon.svg",
     search: {
       provider: "local",
@@ -173,6 +179,7 @@ export default defineConfig({
       message: "Documented with ❤️ by HyperSU Development",
       copyright: "Copyright © 2025-2026 HyperSU, under MIT License",
     },
+
     outline: {
       level: [2, 4],
     },
