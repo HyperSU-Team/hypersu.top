@@ -13,8 +13,9 @@ import locale from "./locale/index.mjs";
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: "HyperSU",
-  description: "A kernel-level ROOT solution for Android built on KernelSU, focused on stability and Non-GKI compatibility.",
+  // 🌟 1. 全局标题与描述（已修正）
+  title: "HyperSU - 面向Android的内核级Root方案 | 支持KernelSU与SukiSU Ultra特性",
+  description: "HyperSU 是一个面向 Android 设备的内核级 Root 方案。A kernel-level ROOT solution for Android built on KernelSU, focused on stability and Non-GKI compatibility.",
 
   sitemap: {
     hostname: "https://hypersu.top",
@@ -63,7 +64,7 @@ export default defineConfig({
       "meta",
       {
         name: "description",
-        content: "A kernel-level ROOT solution for Android built on KernelSU, focused on stability and Non-GKI compatibility.",
+        content: "HyperSU 是一个面向 Android 设备的内核级 Root 方案。A kernel-level ROOT solution for Android built on KernelSU.",
       },
     ],
     ["meta", { name: "theme-color", content: "#ec4899", media: "(prefers-color-scheme: light)" }],
@@ -82,12 +83,13 @@ export default defineConfig({
     ["meta", { name: "apple-mobile-web-app-title", content: "HyperSU" }],
     ["meta", { name: "apple-mobile-web-app-status-bar-style", content: "default" }],
 
-    ["meta", { property: "og:title", content: "HyperSU — Kernel-level ROOT for Android" }],
+    // 🌟 2. 社交媒体分享标题（已同步更新）
+    ["meta", { property: "og:title", content: "HyperSU - 面向Android的内核级Root方案 | 支持KernelSU与SukiSU Ultra特性" }],
     [
       "meta",
       {
         property: "og:description",
-        content: "A kernel-level ROOT solution for Android built on KernelSU, focused on stability and Non-GKI compatibility.",
+        content: "HyperSU 是一个面向 Android 设备的内核级 Root 方案。A kernel-level ROOT solution for Android built on KernelSU.",
       },
     ],
     ["meta", { property: "og:type", content: "website" }],
@@ -100,12 +102,12 @@ export default defineConfig({
     ["meta", { property: "og:locale", content: "en_US" }],
     ["meta", { property: "og:locale:alternate", content: "zh_CN" }],
     ["meta", { name: "twitter:card", content: "summary_large_image" }],
-    ["meta", { name: "twitter:title", content: "HyperSU — Kernel-level ROOT for Android" }],
+    ["meta", { name: "twitter:title", content: "HyperSU - 面向Android的内核级Root方案 | 支持KernelSU与SukiSU Ultra特性" }],
     [
       "meta",
       {
         name: "twitter:description",
-        content: "A kernel-level ROOT solution for Android built on KernelSU, focused on stability and Non-GKI compatibility.",
+        content: "HyperSU 是一个面向 Android 设备的内核级 Root 方案。A kernel-level ROOT solution for Android built on KernelSU.",
       },
     ],
     ["meta", { name: "twitter:image", content: "https://hypersu.top/logo.svg" }],
@@ -202,7 +204,8 @@ export default defineConfig({
     plugins: [
       llmstxt(),
       GitChangelog({
-        repoURL: () => "https://github.com/HyperSU-Team/HyperSU-Website",
+        // 🌟 3. 仓库地址修正（已改成正确的 hypersu.top）
+        repoURL: () => "https://github.com/HyperSU-Team/hypersu.top",
       }),
       GitChangelogMarkdownSection({
         exclude: (id) => id.endsWith("index.md") || id.endsWith("sponsors.md"),
