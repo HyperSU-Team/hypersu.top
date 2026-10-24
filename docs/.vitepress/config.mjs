@@ -11,9 +11,7 @@ import { InlineLinkPreviewElementTransform } from "@nolebase/vitepress-plugin-in
 import mdAutoSpacing from "markdown-it-autospace";
 import locale from "./locale/index.mjs";
 
-// https://vitepress.dev/reference/site-config
 export default defineConfig({
-  // 🌟 1. 全局标题与描述（已修正）
   title: "HyperSU - 面向Android的内核级Root方案 | 支持KernelSU与SukiSU Ultra特性",
   description: "HyperSU 是一个面向 Android 设备的内核级 Root 方案。A kernel-level ROOT solution for Android built on KernelSU, focused on stability and Non-GKI compatibility.",
 
@@ -58,7 +56,6 @@ export default defineConfig({
         content: "PFExExHEiCGSrImS-yWoSnddXHrVHFmejD_kcS1g6AY",
       },
     ],
-
     ["meta", { name: "robots", content: "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" }],
     [
       "meta",
@@ -70,7 +67,6 @@ export default defineConfig({
     ["meta", { name: "theme-color", content: "#ec4899", media: "(prefers-color-scheme: light)" }],
     ["meta", { name: "theme-color", content: "#f472b6", media: "(prefers-color-scheme: dark)" }],
     ["meta", { name: "color-scheme", content: "light dark" }],
-
     [
       "meta",
       {
@@ -82,8 +78,6 @@ export default defineConfig({
     ["meta", { name: "application-name", content: "HyperSU" }],
     ["meta", { name: "apple-mobile-web-app-title", content: "HyperSU" }],
     ["meta", { name: "apple-mobile-web-app-status-bar-style", content: "default" }],
-
-    // 🌟 2. 社交媒体分享标题（已同步更新）
     ["meta", { property: "og:title", content: "HyperSU - 面向Android的内核级Root方案 | 支持KernelSU与SukiSU Ultra特性" }],
     [
       "meta",
@@ -137,7 +131,6 @@ export default defineConfig({
   ],
 
   themeConfig: {
-    // https://vitepress.dev/reference/default-theme-config
     logo: "/favicon.svg",
     search: {
       provider: "local",
@@ -180,7 +173,6 @@ export default defineConfig({
       message: "Documented with ❤️ by HyperSU Development",
       copyright: "Copyright © 2025-2026 HyperSU, under MIT License",
     },
-
     outline: {
       level: [2, 4],
     },
@@ -204,7 +196,6 @@ export default defineConfig({
     plugins: [
       llmstxt(),
       GitChangelog({
-        // 🌟 3. 仓库地址修正（已改成正确的 hypersu.top）
         repoURL: () => "https://github.com/HyperSU-Team/hypersu.top",
       }),
       GitChangelogMarkdownSection({
