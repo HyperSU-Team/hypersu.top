@@ -137,7 +137,10 @@ export default defineConfig({
   themeConfig: {
     siteTitle: "HyperSU",
     
-    logo: "/favicon.svg",
+    logo: {
+  src: "/favicon.svg",
+  alt: "HyperSU Logo"
+},
     search: {
       provider: "local",
       options: {
