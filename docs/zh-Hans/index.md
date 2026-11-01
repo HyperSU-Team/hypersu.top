@@ -5,7 +5,7 @@ layout: home
 hero:
   name: "HyperSU"
   text: "基于 KernelSU 的内核级 ROOT 方案"
-  tagline: "上游为 BakaSU，专注稳定性与 Non-GKI 兼容。"
+  tagline: "专注稳定性与 Non-GKI 兼容。"
   image:
     src: /logo.svg
     alt: HyperSU Logo
