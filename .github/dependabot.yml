@@ -8,7 +8,3 @@ updates:
     directory: "/"
     schedule:
       interval: daily
-  - package-ecosystem: cargo
-    directory: "/tools/gki-lkm-patcher/"
-    schedule:
-      interval: daily

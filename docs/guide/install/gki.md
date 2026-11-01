@@ -16,14 +16,6 @@ Devices that require `vendor_boot` patching are quite rare, so normally only the
 
 Flash the patched image to its corresponding partition, reboot, and open the Manager again to confirm the installation status.
 
-::: info Tip
-We also provide an online tool for patching `init_boot`, `boot`, or `vendor_boot`.
-:::
-
-<ClientOnly>
-  <GKI_LKM_Patcher />
-</ClientOnly>
-
 ::: warning
 The image and target partition must match. Back up important data and prepare stock images and recovery tools before flashing.
 :::

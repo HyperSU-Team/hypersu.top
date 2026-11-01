@@ -16,13 +16,6 @@
 
 将修补后的镜像刷入对应分区，重启后再打开管理器确认安装状态。
 
-:::info 提示
-我们也同时提供了在线工具来在线修补 `init_boot` / `boot` / `vendor_boot`
-:::
-<ClientOnly>
-<GKI_LKM_Patcher />
-</ClientOnly>
-
 ::: warning
 镜像及目标分区必须匹配。刷写前请备份重要数据，并准备原厂镜像和救砖工具。
 :::

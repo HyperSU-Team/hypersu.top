@@ -10,8 +10,6 @@ The HyperSU's Document Website
 
  - NodeJS
  - bun
- - Rust Stable (For wasm build)
- - Clang(LLVM) (For wasm build)
 
 ### Commands
 

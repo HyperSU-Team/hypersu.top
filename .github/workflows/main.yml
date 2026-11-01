@@ -8,7 +8,6 @@ on:
       - main
     paths:
       - docs/**
-      - tools/gki-lkm-patcher/**
       - package.json
       - bun.lock
       - .github/workflows/main.yml
@@ -27,14 +26,6 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-      - uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: wasm32-unknown-unknown
-      - name: Cache Rust dependencies and build artifacts
-        uses: Swatinem/rust-cache@v2
-        with:
-          workspaces: "tools/gki-lkm-patcher -> target"
-          save-if: ${{ github.event_name != 'pull_request' }}
       - name: Install Dependencies
         run: bun install --frozen-lockfile
       - name: Build
