@@ -5,7 +5,7 @@ layout: home
 hero:
   name: "HyperSU"
   text: "Kernel-level ROOT for Android, built on KernelSU"
-  tagline: "Upstream is SukiSU, focused on stability and Non-GKI compatibility."
+  tagline: "Forked from BakaSU, focused on stability and Non-GKI compatibility."
   image:
     src: /logo.svg
     alt: HyperSU Logo

@@ -2,7 +2,7 @@
 
 ## 什么是 HyperSU? {#what-is-hypersu}
 
-HyperSU 是一个基于 KernelSU 的内核级 ROOT 方案，上游为 SukiSU，专注于稳定性与 Non-GKI 设备的兼容性。
+HyperSU 是一个基于 KernelSU 的内核级 ROOT 方案，由 BakaSU 分叉而来（BakaSU 由 SukiSU Ultra 分叉而来，SukiSU Ultra 又由 KernelSU 分叉而来），专注于稳定性与 Non-GKI 设备的兼容性。
 
 ## 特性 {#features}
 

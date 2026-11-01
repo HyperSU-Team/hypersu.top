@@ -2,7 +2,7 @@
 
 ## What is HyperSU? {#what-is-hypersu}
 
-HyperSU is a kernel-level ROOT solution for Android built on KernelSU. Its upstream is SukiSU, and it focuses on stability and Non-GKI device compatibility.
+HyperSU is a kernel-level ROOT solution for Android built on KernelSU. It is forked from BakaSU, which is itself forked from SukiSU Ultra and ultimately KernelSU, and it focuses on stability and Non-GKI device compatibility.
 
 ## Features {#features}
 
