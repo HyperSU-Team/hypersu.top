@@ -49,21 +49,13 @@ tools/bazel build --config=fast //common:kernel_aarch64_dist
 
 ## 使用 HyperSU 构建内核
 
-把 HyperSU 添加到你的内核源码树，在内核的根目录执行以下命令。
-
-GKI 设备：
+把 HyperSU 添加到你的内核源码树，在内核的根目录执行以下命令，GKI 与非 GKI 设备都用这一条：
 
 ```sh
 curl -LSs "https://raw.githubusercontent.com/HyperSU-Team/HyperSU/main/kernel/setup.sh" | bash
 ```
 
-非 GKI 设备：
-
-```sh
-curl -LSs "https://raw.githubusercontent.com/HyperSU-Team/HyperSU/builtin/kernel/setup.sh" | bash
-```
-
-脚本会自动检出对应分支并把 HyperSU 接入你的内核源码树，无需额外参数。
+脚本会检出 `main` 分支并把 HyperSU 接入你的内核源码树，不需要额外参数，也不需要为非 GKI 单独换分支。
 
 ### 手动钩子
 

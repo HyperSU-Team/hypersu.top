@@ -49,21 +49,13 @@ tools/bazel build --config=fast //common:kernel_aarch64_dist
 
 ## Build kernel with HyperSU
 
-First, add HyperSU to your kernel source tree. Run this from the root of your kernel source.
-
-For GKI devices:
+First, add HyperSU to your kernel source tree. Run this from the root of your kernel source, for GKI and non-GKI devices alike:
 
 ```sh
 curl -LSs "https://raw.githubusercontent.com/HyperSU-Team/HyperSU/main/kernel/setup.sh" | bash
 ```
 
-For non-GKI devices:
-
-```sh
-curl -LSs "https://raw.githubusercontent.com/HyperSU-Team/HyperSU/builtin/kernel/setup.sh" | bash
-```
-
-The script checks out the matching branch and wires HyperSU into your tree; no extra arguments are needed.
+The script checks out `main` and wires HyperSU into your tree; no extra arguments and no separate branch for non-GKI kernels are needed.
 
 ### Manual hooks
 
