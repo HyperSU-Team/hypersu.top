@@ -14,13 +14,13 @@ const messages = {
     title: 'Our sponsors',
     lead: 'Thank you to the people helping HyperSU grow.',
     tier: 'Domain sponsor',
-    credit: 'Donated the HyperSU.top domain',
+    credit: 'Donated the HyperSU.top domain meow~',
   },
   'zh-CN': {
     title: '感谢支持',
     lead: '感谢帮助 HyperSU 持续发展的每一位朋友。',
     tier: '域名赞助者',
-    credit: '捐赠了 HyperSU.top 域名',
+    credit: '捐赠了 HyperSU.top 域名喵~',
   },
 }
 const copy = computed(() => messages[lang.value] ?? messages.en)
