@@ -4,26 +4,41 @@ import { useData } from 'vitepress'
 import { VPTeamPageTitle } from 'vitepress/theme'
 
 const { lang } = useData()
-const sponsor = {
-  name: 'JiYing-spec',
-  profile: 'https://github.com/JiYing-spec',
-  avatar: 'https://github.com/JiYing-spec.png',
-}
+const sponsors = [
+  {
+    name: 'JiYing-spec',
+    profile: 'https://github.com/JiYing-spec',
+    avatar: 'https://github.com/JiYing-spec.png',
+    credit: {
+      en: 'Donated the HyperSU.top domain meow~',
+      'zh-CN': '捐赠了 HyperSU.top 域名喵~',
+    },
+  },
+  {
+    name: 'KirinNova',
+    profile: 'https://github.com/KirinNova',
+    avatar: 'https://github.com/KirinNova.png',
+    credit: {
+      en: 'Provided technical support meow~',
+      'zh-CN': '提供了技术支持喵~',
+    },
+  },
+]
+
 const messages = {
   en: {
     title: 'Our sponsors',
     lead: 'Thank you to the people helping HyperSU grow.',
-    tier: 'Domain sponsor',
-    credit: 'Donated the HyperSU.top domain meow~',
+    tier: 'Supporters',
   },
   'zh-CN': {
     title: '感谢支持',
     lead: '感谢帮助 HyperSU 持续发展的每一位朋友。',
-    tier: '域名赞助者',
-    credit: '捐赠了 HyperSU.top 域名喵~',
+    tier: '支持者',
   },
 }
 const copy = computed(() => messages[lang.value] ?? messages.en)
+const creditOf = (sponsor) => sponsor.credit[lang.value] ?? sponsor.credit.en
 </script>
 
 <template>
@@ -35,13 +50,14 @@ const copy = computed(() => messages[lang.value] ?? messages.en)
 
     <section class="sponsor-section" aria-labelledby="domain-sponsors">
       <h2 id="domain-sponsors" class="tier-label">{{ copy.tier }}</h2>
-      <a class="sponsor-card" :href="sponsor.profile" target="_blank" rel="noopener noreferrer">
-        <img :src="sponsor.avatar" alt="" width="64" height="64" decoding="async" />
-        <h3>{{ sponsor.name }}</h3>
-      </a>
-      <p class="donation-credit">{{ copy.credit }}</p>
+      <div v-for="sponsor in sponsors" :key="sponsor.name" class="sponsor-item">
+        <a class="sponsor-card" :href="sponsor.profile" target="_blank" rel="noopener noreferrer">
+          <img v-if="sponsor.avatar" :src="sponsor.avatar" alt="" width="64" height="64" decoding="async" />
+          <h3>{{ sponsor.name }}</h3>
+        </a>
+        <p class="donation-credit">{{ creditOf(sponsor) }}</p>
+      </div>
     </section>
-
   </main>
 </template>
 
@@ -59,6 +75,9 @@ const copy = computed(() => messages[lang.value] ?? messages.en)
   max-width: 760px;
   margin: 0 auto;
   border: 1px solid var(--vp-c-divider);
+}
+.sponsor-item + .sponsor-item {
+  border-top: 1px solid var(--vp-c-divider);
 }
 .tier-label {
   padding: 20px 28px;
@@ -95,6 +114,7 @@ const copy = computed(() => messages[lang.value] ?? messages.en)
   font-weight: 600;
   line-height: 1.2;
   color: var(--vp-c-text-1);
+  overflow-wrap: anywhere;
 }
 .donation-credit {
   padding: 12px 24px;
@@ -114,7 +134,5 @@ h2 {
   .tier-label { padding: 16px 20px; }
   .sponsor-card { min-height: 180px; gap: 20px; padding: 32px 20px; }
   .sponsor-card img { width: 52px; height: 52px; }
-}
-@media (prefers-reduced-motion: reduce) {
 }
 </style>
